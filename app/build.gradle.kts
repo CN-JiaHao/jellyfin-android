@@ -33,7 +33,9 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionName = project.getVersionName()
+        // Fixed version name: the fork does not carry the upstream release tags,
+        // so git-describe would fall back to 0.0.0-dev.1.
+        versionName = "2.7.3"
         versionCode = getVersionCode(versionName!!)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
