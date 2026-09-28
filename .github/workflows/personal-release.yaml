@@ -2,6 +2,9 @@ name: Personal Release
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - personal
 
 permissions:
   contents: write
