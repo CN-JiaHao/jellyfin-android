@@ -1,0 +1,38 @@
+name: Personal Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and release
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup Java
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version-file: .tools-versions
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6.2.0
+      - name: Assemble debug APKs
+        run: ./gradlew assembleProprietaryDebug
+      - name: Collect APK
+        run: |
+          mkdir -p build/personal-out
+          find app/build/ -iname "*.apk" -exec cp "{}" build/personal-out/ \;
+          ls -la build/personal-out
+      - name: Create release
+        run: |
+          TAG="v2.7.3-personal-${GITHUB_RUN_NUMBER}"
+          gh release create "$TAG" build/personal-out/*.apk \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Jellyfin Android 2.7.3 proprietary - status bar fix" \
+            --notes "Built from jellyfin-android v2.7.3 (personal branch). Changes: the web app now draws behind a transparent status bar so the status bar matches the page color."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
