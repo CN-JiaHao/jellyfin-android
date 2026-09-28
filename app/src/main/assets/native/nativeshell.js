@@ -132,3 +132,11 @@ window.NativeShell.AppHost = {
         window.NativeInterface.exitApp();
     }
 };
+
+// The app draws edge-to-edge, so the page paints behind the status bar.
+// Push the header down by the status bar height to keep its content tappable.
+(function applyStatusBarInset() {
+    const style = document.createElement('style');
+    style.textContent = '.skinHeader { padding-top: var(--safe-area-inset-top, 0px); }';
+    document.head.appendChild(style);
+})();
