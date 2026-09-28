@@ -124,7 +124,7 @@ android {
     }
 }
 
-base.archivesName.set("jellyfin-android-v${project.getVersionName()}")
+base.archivesName.set("jellyfin-android-v2.7.3")
 
 dependencies {
     val proprietaryImplementation by configurations
