@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
@@ -43,6 +44,13 @@ import org.koin.androidx.fragment.android.setupKoinFragmentFactory
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        // Jellyfin's default dark app-bar color. Used to tint the window background so
+        // the transparent status bar blends with the web app header (immersive look)
+        // while the WebView keeps its normal layout and scrolling works.
+        private val HEADER_COLOR = Color.parseColor("#202020")
+    }
+
     private val activityEventHandler: ActivityEventHandler = get()
     val mainViewModel: MainViewModel by viewModel()
     val bluetoothPermissionHelper: BluetoothPermissionHelper = BluetoothPermissionHelper(this, get())
@@ -98,9 +106,13 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
         setupKoinFragmentFactory()
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
-            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            statusBarStyle = SystemBarStyle.light(HEADER_COLOR, HEADER_COLOR),
+            navigationBarStyle = SystemBarStyle.light(HEADER_COLOR, HEADER_COLOR),
         )
+        // The transparent status bar shows the window background behind it. Tinting it
+        // to the app-bar color makes it blend seamlessly with Jellyfin's header without
+        // drawing the WebView behind the status bar (which broke page scrolling).
+        window.setBackgroundDrawable(ColorDrawable(HEADER_COLOR))
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
