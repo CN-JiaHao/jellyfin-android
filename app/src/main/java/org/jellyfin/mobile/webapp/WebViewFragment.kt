@@ -71,7 +71,6 @@ class WebViewFragment : Fragment(), BackPressInterceptor, JellyfinWebChromeClien
 
     // UI
     private var webViewBinding: FragmentWebviewBinding? = null
-    private var statusBarInset = 0
 
     // External file access
     private var fileChooserActivityLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -103,7 +102,6 @@ class WebViewFragment : Fragment(), BackPressInterceptor, JellyfinWebChromeClien
                 runOnUiThread {
                     webViewBinding.loadingContainer.isVisible = false
                     webView.fadeIn()
-                    applySafeAreaInset()
                 }
                 requestNoBatteryOptimizations(webViewBinding.root)
             }
@@ -125,12 +123,8 @@ class WebViewFragment : Fragment(), BackPressInterceptor, JellyfinWebChromeClien
         super.onViewCreated(view, savedInstanceState)
         val webView = webViewBinding!!.webView
 
-        // Apply window insets. The top inset is skipped so the web app paints behind the
-        // status bar, making the status bar adopt the same color as the page behind it.
-        webView.applyWindowInsetsAsMargins(skipTop = true) { topInset ->
-            statusBarInset = topInset
-            applySafeAreaInset()
-        }
+        // Apply window insets
+        webView.applyWindowInsetsAsMargins()
 
         // Setup exclusion rects for gestures
         if (AndroidVersion.isAtLeastQ) {
@@ -172,17 +166,6 @@ class WebViewFragment : Fragment(), BackPressInterceptor, JellyfinWebChromeClien
                 webView.evaluateJavascript(function, null)
             }
         }
-    }
-
-    /**
-     * Publishes the status bar height to the web app so it can offset its own header.
-     */
-    private fun applySafeAreaInset() {
-        val webView = webViewBinding?.webView ?: return
-        webView.evaluateJavascript(
-            "document.documentElement.style.setProperty('--safe-area-inset-top', '${statusBarInset}px')",
-            null,
-        )
     }
 
     override fun onInterceptBackPressed(): Boolean {
