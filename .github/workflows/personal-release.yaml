@@ -36,6 +36,6 @@ jobs:
           gh release create "$TAG" build/personal-out/*.apk \
             --repo "$GITHUB_REPOSITORY" \
             --title "Jellyfin Android 2.7.3 proprietary - status bar fix" \
-            --notes "Built from jellyfin-android v2.7.3 (personal branch). Changes: the web app now draws behind a transparent status bar so the status bar matches the page color."
+            --notes "Built from jellyfin-android v2.7.3 (personal branch). Fix: status bar is tinted to match the Jellyfin header while the WebView keeps its normal layout, restoring page scrolling."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
