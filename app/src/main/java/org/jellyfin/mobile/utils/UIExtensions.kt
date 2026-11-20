@@ -37,16 +37,12 @@ fun LayoutInflater.withThemedContext(context: Context, @StyleRes style: Int): La
     return cloneInContext(ContextThemeWrapper(context, style))
 }
 
-fun View.applyWindowInsetsAsMargins(
-    skipTop: Boolean = false,
-    onTopInsetChanged: ((Int) -> Unit)? = null,
-) {
+fun View.applyWindowInsetsAsMargins() {
     ViewCompat.setOnApplyWindowInsetsListener(this) { _, windowInsets ->
         val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
         updateLayoutParams<MarginLayoutParams> {
-            setMargins(insets.left, if (skipTop) 0 else insets.top, insets.right, insets.bottom)
+            setMargins(insets.left, insets.top, insets.right, insets.bottom)
         }
-        onTopInsetChanged?.invoke(insets.top)
         windowInsets
     }
 }
